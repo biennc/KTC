@@ -1,0 +1,60 @@
+.hourlyForecast {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.forecastContainer {
+  display: flex;
+  overflow-x: auto;
+  padding: 15px 0;
+  gap: 25px;
+  scrollbar-width: thin;
+  scrollbar-color: #6dd5ed #f1f1f1;
+  width: 100%;
+}
+
+.forecastContainer::-webkit-scrollbar {
+  height: 8px;
+}
+
+.forecastContainer::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.forecastContainer::-webkit-scrollbar-thumb {
+  background-color: #6dd5ed;
+  border-radius: 10px;
+}
+
+.forecastItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.time {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  white-space: nowrap;
+}
+
+.forecastIcon {
+  width: 50px;
+  height: 50px;
+  margin: 10px 0;
+}
+
+.temperature {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  white-space: nowrap;
+}

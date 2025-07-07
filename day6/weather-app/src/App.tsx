@@ -1,80 +1,98 @@
-import './App.css'
-const key = 'c9a0ca46550648b29ce125849232709'
-const currentWeatherUrl = 'https://api.weatherapi.com/v1/current.json?key=c9a0ca46550648b29ce125849232709&q=Da%20nang&lang=vi'
+import React, { useState, useEffect } from 'react';
+import styles from './App.module.css';
+import CurrentWeather from './components/CurrentWeather';
+import HourlyForecast from './components/HourlyForecast';
+import SearchBar from './components/SearchBar';
 
+interface WeatherData {
+  location: {
+    name: string;
+  };
+  current: {
+    temp_c: number;
+    condition: {
+      text: string;
+      icon: string;
+    };
+    humidity: number;
+    wind_kph: number;
+  };
+  forecast: {
+    forecastday: {
+      hour: {
+        time: string;
+        temp_c: number;
+        condition: {
+          icon: string;
+        };
+      }[];
+    }[];
+  };
+}
 
-import React, { useEffect, useState } from 'react';
+const API_KEY = 'c9a0ca46550648b29ce125849232709';
 
-function App() {
-  const [city, setCity] = useState('Hanoi');
+const App: React.FC = () => {
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [searchQuery, setSearchQuery] = useState('Hanoi');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    const fetchData = async () => {
-    try {
-      const response = await fetch(currentWeatherUrl)
-      const data = await response.json()
-    } catch (error) {
-      console.log(error);
-      
-    }
-  }
-  }, [])
-  // Dummy data for UI
-  const weather = {
-    temp: 26,
-    condition: 'Sunny',
-    icon: '',
-    humidity: 41,
-    wind: '3,2',
-    forecast: [
-      { hour: 'Now', temp: 26, icon: '☀️' },
-      { hour: '15:00', temp: 25, icon: '☀️' },
-      { hour: '16:00', temp: 24, icon: '☀️' },
-      { hour: '17:00', temp: 24, icon: '☀️' },
-    ],
+    const fetchWeatherData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch(
+          `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${searchQuery}&days=2`
+        );
+        
+        if (!response.ok) {
+          throw new Error('City not found');
+        }
+        
+        const data: WeatherData = await response.json();
+        setWeatherData(data);
+      } catch (err) {
+        setError(err.message || 'Failed to fetch weather data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWeatherData();
+  }, [searchQuery]);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
   };
 
   return (
-    <div className="weather-app">
-      <div className="search-bar">
-        <input
-          type="text"
-          value={city}
-          onChange={e => setCity(e.target.value)}
-          placeholder="Hanoi"
-        />
-      </div>
-      <div className="main-weather">
-        <div className="temp-icon">
-          <span className="temp">{weather.temp}°</span>
-          <span className="icon">{weather.icon}</span>
-        </div>
-        <div className="condition">{weather.condition}</div>
-      </div>
-      <div className="details">
-        <div className="detail-item">
-          <div className="label">Humidity</div>
-          <div className="value">{weather.humidity}%</div>
-        </div>
-        <div className="divider" />
-        <div className="detail-item">
-          <div className="label">Wind</div>
-          <div className="value">{weather.wind} km/h</div>
-        </div>
-      </div>
-      <div className="forecast">
-        <div className="forecast-title">Now</div>
-        <div className="forecast-list">
-          {weather.forecast.map((item, idx) => (
-            <div className="forecast-item" key={idx}>
-              <div className="forecast-icon">{item.icon}</div>
-              <div className="forecast-temp">{item.temp}°</div>
-              <div className="forecast-hour">{item.hour}</div>
-            </div>
-          ))}
-        </div>
+    <div className={styles.app}>
+      <div className={styles.container}>
+        <SearchBar onSearch={handleSearch} />
+        
+        {loading && <div className={styles.loading}>Loading weather data...</div>}
+        {error && <div className={styles.error}>{error}</div>}
+        
+        {weatherData && !loading && !error && (
+          <>
+            <CurrentWeather 
+              temperature={weatherData.current.temp_c}
+              condition={weatherData.current.condition.text}
+              icon={weatherData.current.condition.icon}
+              humidity={weatherData.current.humidity}
+              windSpeed={weatherData.current.wind_kph}
+            />
+            
+            <HourlyForecast 
+              forecastData={weatherData.forecast}
+            />
+          </>
+        )}
       </div>
     </div>
   );
-}
+};
 
-export default App
+export default App;

@@ -1,0 +1,28 @@
+.app {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #6dd5ed, #2193b0);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  margin-top: 40px;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  margin-top: 20px;
+  color: #333;
+  font-weight: 500;
+}
+
+.error {
+  color: #e74c3c;
+}
