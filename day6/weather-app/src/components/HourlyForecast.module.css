@@ -11,23 +11,13 @@
   overflow-x: auto;
   padding: 15px 0;
   gap: 25px;
-  scrollbar-width: thin;
-  scrollbar-color: #6dd5ed #f1f1f1;
   width: 100%;
+  
+  -ms-overflow-style: none;
 }
 
 .forecastContainer::-webkit-scrollbar {
-  height: 8px;
-}
-
-.forecastContainer::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 10px;
-}
-
-.forecastContainer::-webkit-scrollbar-thumb {
-  background-color: #6dd5ed;
-  border-radius: 10px;
+  display: none;
 }
 
 .forecastItem {
