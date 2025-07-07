@@ -1,0 +1,124 @@
+
+.weather-app {
+  max-width: 350px;
+  margin: 40px auto;
+  background: linear-gradient(180deg, #a3c9f9 0%, #e0ecfa 100%);
+  border-radius: 32px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  padding: 32px 20px 24px 20px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.search-bar input {
+  width: 100%;
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: none;
+  font-size: 1.1rem;
+  background: #eaf2fb;
+  outline: none;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.main-weather {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.temp-icon {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.temp {
+  font-size: 4.5rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.icon {
+  font-size: 3.2rem;
+  color: #fff;
+}
+.condition {
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.35);
+  border-radius: 18px;
+  padding: 16px 0;
+  margin-bottom: 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.detail-item {
+  flex: 1;
+  text-align: center;
+}
+.label {
+  font-size: 1rem;
+  color: #4a5a6a;
+  margin-bottom: 2px;
+}
+.value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #222;
+}
+.divider {
+  width: 1px;
+  background: #dbeafe;
+  height: 36px;
+  margin: 0 8px;
+}
+
+.forecast {
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px 10px 10px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.forecast-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 10px;
+}
+.forecast-list {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.forecast-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 56px;
+}
+.forecast-icon {
+  font-size: 1.5rem;
+  margin-bottom: 2px;
+}
+.forecast-temp {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #222;
+}
+.forecast-hour {
+  font-size: 1rem;
+  color: #4a5a6a;
+  margin-top: 2px;
+}
