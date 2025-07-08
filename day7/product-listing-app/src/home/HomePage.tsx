@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import FilterSideBar from '../FilterSideBar';
 import ProductPage from '../product/ProductPage';
+import CategoryPage from '../category/CategoryPage';
 
 export default function HomePage() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -38,14 +38,14 @@ export default function HomePage() {
 
   return (
     <div className="flex gap-4">
-      <FilterSideBar selectedCategories={selectedCategories} onCategoryChange={handleCategoryChange} />
-      <div className="flex-1">
+      <CategoryPage selectedCategories={selectedCategories} onCategoryChange={handleCategoryChange} />
+      {/* <div className="flex-1">
         {loading ? (
           <div className="text-center py-10">Đang tải sản phẩm...</div>
         ) : (
           <ProductPage products={products} />
         )}
-      </div>
+      </div> */}
     </div>
   );
 }
