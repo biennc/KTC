@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./afternoon_practice.js"></script>
+    <title>Document</title>
+  </head>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      justify-content: left;
+      align-items: left;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .container > div {
+      margin: 5px;
+    }
+    input {
+      height: 27px;
+    }
+    button {
+      max-width: 200px;
+      padding: 5px 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .image {
+      display: flex;
+      flex-direction: column;
+    }
+    .hoverBox {
+      width: 200px;
+      height: 50px;
+      background-color: #329837;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <div class="btn">(1)
+        <button id="changeTextBtn" onclick="changeText()">Hello</button>
+      </div>
+      <div class="box">(2)
+        <button id="toggleHighlightBtn" onclick="highlight()">Highlight</button>
+      </div>
+      <div class="add-new">(3-4)
+        <input type="text" class="" id="itemInput" />
+        <button id="addItemBtn" onclick="addItem()">Add</button>
+        <button id="deleteBtn" onclick="removeItem()">Delete</button>
+        <div class="inputData" style="display: block"></div>
+      </div>
+      <div class="image">(5)
+        <img
+          id="mainImage"
+          src="https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630"
+          alt="Image"
+          style="width: 200px; height: 150px"
+        />
+        <button
+          id="changeImageBtn"
+          style="margin-top: 10px"
+          onclick="changeImage()"
+        >
+          Change Image
+        </button>
+      </div>
+      <div class="get-name">(6)
+        <input type="text" id="usernameInput">
+        <button id="submitUsername">Submit</button>
+      </div>
+      <div class="btn-group" onclick="multiButton()">(7)
+        <button class="colorBtn">1</button>
+        <button class="colorBtn">2</button>
+        <button class="colorBtn">3</button>
+      </div>
+      <div class="hoverBox" id="hoverBox">(8)
+        Hover over me
+
+      </div>
+      <div class="display-time" onload="updateClock()">(9)
+        <span id="clock"></span>
+      </div>
+      <div class="email">(10)
+        <input id="emailInput" placeholder="enter your email" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required/>
+        <button id='validateBtn' onclick=validateEmail()>Submit</button>
+        <span id="errorMessage"></span>
+      </div>
+      <div class="hide-element">(11)
+        <button id="hideParaBtn">Hide</button>
+        <span id="infoPara">Invisible</span>
+      </div>
+      <div class="greeting-block">(12)
+        <p id="greetingText"></p>
+      </div>
+      <div class="form-block">(13)
+        <input type="text" id="nameInput" placeholder="Enter your name">
+        <button id="formSubmit">Submit</button>
+        <span id="nameError" style="color:red"></span>
+      </div>
+      <div class="once-btn-block">(14)
+        <button id="onceBtn">Click Me Once</button>
+      </div>
+      <div class="char-counter-block">(15)
+        <textarea id="bioInput" maxlength="200" rows="3" cols="30" placeholder="Write your bio..."></textarea>
+        <p id="charCount">200 characters remaining</p>
+      </div>
+      <div class="add-box-block">(16)
+        <button id="addBoxBtn">Add Box</button>
+        <div id="boxContainer" style="display:flex;gap:8px;margin-top:8px;"></div>
+      </div>
+      <div class="todo-block">(17)
+        <ul id="todoList">
+          <li>Learn JavaScript</li>
+          <li>Practice Coding</li>
+          <li>Read a Book</li>
+        </ul>
+      </div>
+      <div class="password-block">(18)
+        <input type="password" id="passwordInput" placeholder="Password">
+        <label><input type="checkbox" id="togglePassword"> Show Password</label>
+      </div>
+      <div class="checkbox-count-block">(19)
+        <label><input type="checkbox" class="optionBox"> Option 1</label>
+        <label><input type="checkbox" class="optionBox"> Option 2</label>
+        <label><input type="checkbox" class="optionBox"> Option 3</label>
+        <span id="checkedCount">0 checked</span>
+      </div>
+      <div class="gallery-block">(20)
+        <img id="mainPhoto" src="https://placehold.co/200x120" style="width:200px;height:120px;border:1px solid #aaa;display:block;margin-bottom:8px;">
+        <div>
+          <img class="thumbnail" src="https://placehold.co/60x40/ff6666/fff?text=1" style="width:60px;height:40px;cursor:pointer;">
+          <img class="thumbnail" src="https://placehold.co/60x40/66ff66/fff?text=2" style="width:60px;height:40px;cursor:pointer;">
+          <img class="thumbnail" src="https://placehold.co/60x40/6666ff/fff?text=3" style="width:60px;height:40px;cursor:pointer;">
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

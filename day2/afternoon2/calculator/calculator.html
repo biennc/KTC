@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./calculator.js"></script>
+    <title>Calculator</title>
+    <style>
+        .calculator {
+            width: 280px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .display {
+            width: 100%;
+            height: 60px;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-align: right;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .buttons button {
+            height: 50px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: none;
+            background: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .buttons button:active {
+            transform: translateY(0);
+        }
+        .operator {
+            background: #ff9500 !important;
+            color: white;
+        }
+        .operator:hover {
+            background: #e8860c !important;
+        }
+        .equals {
+            background: #ff9500 !important;
+            color: white;
+        }
+        .equals:hover {
+            background: #e8860c !important;
+        }
+        .clear {
+            background: #a6a6a6 !important;
+            color: white;
+            grid-column: span 4;
+        }
+        .clear:hover {
+            background: #8f8f8f !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" id="display" class="display" readonly />
+        <div class="buttons">
+            <button class="number" data-number="7">7</button>
+            <button class="number" data-number="8">8</button>
+            <button class="number" data-number="9">9</button>
+            <button class="operator" data-operator="÷">÷</button>
+            
+            <button class="number" data-number="4">4</button>
+            <button class="number" data-number="5">5</button>
+            <button class="number" data-number="6">6</button>
+            <button class="operator" data-operator="×">×</button>
+            
+            <button class="number" data-number="1">1</button>
+            <button class="number" data-number="2">2</button>
+            <button class="number" data-number="3">3</button>
+            <button class="operator" data-operator="-">−</button>
+            
+            <button class="number" data-number="0">0</button>
+            <button id="dot">.</button>
+            <button class="equals" id="equals">=</button>
+            <button class="operator" data-operator="+">+</button>
+            
+            <button class="clear" id="clear">C</button>
+        </div>
+    </div>
+</body>
+</html>
