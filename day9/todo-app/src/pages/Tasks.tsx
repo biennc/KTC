@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { FaTasks, FaPlus, FaClipboardList } from 'react-icons/fa';
 
 import TaskFilterForm from '../components/TaskFilterForm';
 import TaskList from '../components/TaskList';
@@ -43,7 +44,10 @@ export default function Tasks() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">📋 Task Dashboard</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+                <FaClipboardList className="mr-3" />
+                Task Dashboard
+              </h1>
               <p className="text-gray-600">Manage and track all your tasks efficiently</p>
             </div>
             <div className="mt-4 sm:mt-0 flex items-center space-x-4">
@@ -70,7 +74,7 @@ export default function Tasks() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-gray-800 flex items-center">
-                  <span className="mr-3">📝</span>
+                  <FaTasks className="mr-3" />
                   Our Tasks
                 </h2>
                 <p className="text-gray-600 mt-1">
@@ -85,7 +89,7 @@ export default function Tasks() {
                   onClick={() => navigate('/create')}
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg"
                 >
-                  <span className="mr-2">➕</span>
+                  <FaPlus className="mr-2" />
                   Create New Task
                 </button>
               </div>

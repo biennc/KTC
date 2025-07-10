@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { FaSearch, FaChartBar, FaBullseye, FaSpinner, FaChevronDown } from 'react-icons/fa';
 import type { Filter } from '../types';
 
 // Filter form data interface
@@ -47,7 +48,10 @@ export default function TaskFilterForm({ onSearch }: Props) {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">🔍 Filter Tasks</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2 flex items-center">
+            <FaSearch className="mr-3" />
+            Filter Tasks
+          </h2>
           <p className="text-gray-600">Find exactly what you're looking for</p>
         </div>
 
@@ -57,7 +61,7 @@ export default function TaskFilterForm({ onSearch }: Props) {
             {/* Status Filter */}
             <div className="space-y-2">
               <label htmlFor="status" className="flex items-center text-sm font-semibold text-gray-700">
-                <span className="mr-2">📊</span>
+                <FaChartBar className="mr-2" />
                 Status
               </label>
               <div className="relative">
@@ -72,9 +76,7 @@ export default function TaskFilterForm({ onSearch }: Props) {
                   <option value="done">✅ Done</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <FaChevronDown className="w-5 h-5 text-gray-400" />
                 </div>
               </div>
               {errors.status && <p className="text-red-500 text-sm mt-1 flex items-center">
@@ -86,7 +88,7 @@ export default function TaskFilterForm({ onSearch }: Props) {
             {/* Priority Filter */}
             <div className="space-y-2">
               <label htmlFor="priority" className="flex items-center text-sm font-semibold text-gray-700">
-                <span className="mr-2">🎯</span>
+                <FaBullseye className="mr-2" />
                 Priority
               </label>
               <div className="relative">
@@ -101,9 +103,7 @@ export default function TaskFilterForm({ onSearch }: Props) {
                   <option value="high">🔴 High</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <FaChevronDown className="w-5 h-5 text-gray-400" />
                 </div>
               </div>
               {errors.priority && <p className="text-red-500 text-sm mt-1 flex items-center">
@@ -121,15 +121,12 @@ export default function TaskFilterForm({ onSearch }: Props) {
               >
                 {isSubmitting ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
                     Searching...
                   </>
                 ) : (
                   <>
-                    <span className="mr-2">🔍</span>
+                    <FaSearch className="mr-2" />
                     Search Tasks
                   </>
                 )}

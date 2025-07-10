@@ -1,6 +1,7 @@
 // Create LoginContext to manage login state
 import { useContext, useState } from 'react';
 import { BrowserRouter, Link, Route, Routes, useNavigate } from 'react-router';
+import { FaTasks, FaPlus, FaUser, FaSignOutAlt, FaBars, FaTimes, FaClipboardList } from 'react-icons/fa';
 
 import { LoginContext } from './context';
 import AssigneeMe from '../pages/AssigneeMe';
@@ -23,9 +24,9 @@ const Navigation = () => {
   }
 
   const navItems = [
-    { path: '/tasks', label: 'Tasks', exact: true, icon: '📋' },
-    { path: '/create', label: 'Create Task', exact: false, icon: '➕' },
-    { path: '/assignee-me', label: 'Assigned to Me', exact: false, icon: '👤' },
+    { path: '/tasks', label: 'Tasks', exact: true, icon: FaTasks },
+    { path: '/create', label: 'Create Task', exact: false, icon: FaPlus },
+    { path: '/assignee-me', label: 'Assigned to Me', exact: false, icon: FaUser },
   ];
 
   const isActive = (path: string, exact: boolean) => {
@@ -42,7 +43,7 @@ const Navigation = () => {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-blue-600 font-bold text-lg">📝</span>
+              <FaClipboardList className="text-blue-600 text-lg" />
             </div>
             <h1 className="text-xl font-bold text-white hidden sm:block">Tasks Management</h1>
             <h1 className="text-lg font-bold text-white sm:hidden">Tasks</h1>
@@ -50,20 +51,23 @@ const Navigation = () => {
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 ${
-                  isActive(item.path, item.exact)
-                    ? 'bg-white text-blue-600 shadow-md'
-                    : 'text-blue-100 hover:text-white hover:bg-blue-500/30'
-                }`}
-              >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const IconComponent = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 ${
+                    isActive(item.path, item.exact)
+                      ? 'bg-white text-blue-600 shadow-md'
+                      : 'text-blue-100 hover:text-white hover:bg-blue-500/30'
+                  }`}
+                >
+                  <IconComponent />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
             <button
               onClick={() => {
                 setUser(null); // Clear user context on logout
@@ -71,7 +75,7 @@ const Navigation = () => {
               }}
               className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm bg-red-500 font-medium transition-all duration-200 text-white hover:bg-red-600 transform hover:scale-105 shadow-md"
             >
-              <span>🚪</span>
+              <FaSignOutAlt />
               <span>Logout</span>
             </button>
           </div>
@@ -82,13 +86,11 @@ const Navigation = () => {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-white hover:text-blue-200 focus:outline-none focus:text-blue-200 transition-colors duration-200"
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              {isMobileMenuOpen ? (
+                <FaTimes className="h-6 w-6" />
+              ) : (
+                <FaBars className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -97,21 +99,24 @@ const Navigation = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden pb-4">
             <div className="flex flex-col space-y-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive(item.path, item.exact)
-                      ? 'bg-white text-blue-600 shadow-md'
-                      : 'text-blue-100 hover:text-white hover:bg-blue-500/30'
-                  }`}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  <span>{item.label}</span>
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive(item.path, item.exact)
+                        ? 'bg-white text-blue-600 shadow-md'
+                        : 'text-blue-100 hover:text-white hover:bg-blue-500/30'
+                    }`}
+                  >
+                    <IconComponent className="text-lg" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
               <button
                 onClick={() => {
                   setUser(null);
@@ -120,7 +125,7 @@ const Navigation = () => {
                 }}
                 className="flex items-center space-x-3 px-4 py-3 rounded-lg text-sm bg-red-500 font-medium transition-all duration-200 text-white hover:bg-red-600 shadow-md"
               >
-                <span className="text-lg">🚪</span>
+                <FaSignOutAlt className="text-lg" />
                 <span>Logout</span>
               </button>
             </div>
