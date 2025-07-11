@@ -71,9 +71,9 @@ export default function TaskFilterForm({ onSearch }: Props) {
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer"
                 >
                   <option value="">All Statuses</option>
-                  <option value="to_do">📝 To Do</option>
-                  <option value="in_progress">⚡ In Progress</option>
-                  <option value="done">✅ Done</option>
+                  <option value="to_do">To Do</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="done">Done</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                   <FaChevronDown className="w-5 h-5 text-gray-400" />
@@ -98,9 +98,9 @@ export default function TaskFilterForm({ onSearch }: Props) {
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md appearance-none cursor-pointer"
                 >
                   <option value="">All Priorities</option>
-                  <option value="low">🟢 Low</option>
-                  <option value="medium">🟡 Medium</option>
-                  <option value="high">🔴 High</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                   <FaChevronDown className="w-5 h-5 text-gray-400" />

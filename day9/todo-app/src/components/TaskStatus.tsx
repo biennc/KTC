@@ -28,9 +28,9 @@ export default function TaskStatus({ task }: { task: Task }) {
 
     return (
       <span
-        className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 hover:scale-105 ${config.style}`}
+        className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 hover:scale-105 whitespace-nowrap ${config.style}`}
       >
-        <IconComponent className="mr-1.5" />
+        <IconComponent className="mr-1.5 flex-shrink-0" />
         {config.label}
       </span>
     );
