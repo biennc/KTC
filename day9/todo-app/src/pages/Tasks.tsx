@@ -7,7 +7,7 @@ import TaskList from '../components/TaskList';
 import { searchTasks } from '../utils';
 
 import type { Filter, Task } from '../types';
-import { getTasks } from '../services';
+import { deleteTask, getTasks } from '../services';
 
 export default function Tasks() {
   const navigate = useNavigate();
@@ -33,6 +33,27 @@ export default function Tasks() {
 
   const handleEdit = (taskId: string | number | undefined) => {
     navigate(`/update/${taskId}`);
+  };
+
+  const handleDelete = async (taskId: string | number | undefined) => {
+    if (!taskId) {
+      console.error('Task ID is required for deletion');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to delete this task?')) {
+      return;
+    }
+
+    try {
+      await deleteTask(String(taskId));
+      // Refresh the tasks list after successful deletion
+      const data = await getTasks();
+      setTasks(data);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      alert('Failed to delete task. Please try again.');
+    }
   };
 
   const filteredTasks = searchTasks(tasks, filters);
@@ -97,7 +118,7 @@ export default function Tasks() {
           </div>
 
           <div className="overflow-hidden">
-            <TaskList tasks={filteredTasks} onEdit={handleEdit} />
+            <TaskList tasks={filteredTasks} onEdit={handleEdit} onDelete={handleDelete} />
           </div>
         </section>
       </div>

@@ -1,4 +1,4 @@
-import { FaEdit, FaClipboardList } from 'react-icons/fa';
+import { FaEdit, FaClipboardList, FaTrash } from 'react-icons/fa';
 import type { Task } from '../types';
 import TaskDate from './TaskDate';
 import TaskPriority from './TaskPriority';
@@ -8,9 +8,10 @@ import TaskTitle from './TaskTitle';
 type Props = {
   tasks: Task[];
   onEdit?: (taskId: string | number | undefined) => void;
+  onDelete?: (taskId: string | number | undefined) => void;
 };
 
-export default function TaskList({ tasks, onEdit }: Props) {
+export default function TaskList({ tasks, onEdit, onDelete }: Props) {
   if (tasks.length === 0) {
     return (
       <div className="text-center py-12">
@@ -53,10 +54,10 @@ export default function TaskList({ tasks, onEdit }: Props) {
                 <td className="px-6 py-4">
                   <TaskTitle task={{ title: task.title, description: task.description }} />
                 </td>
-                <td className="px-6 py-4 text-center">
+                <td className="px-3 py-4 text-center">
                   <TaskStatus task={task} />
                 </td>
-                <td className="px-6 py-4 text-center">
+                <td className="px-3 py-4 text-center">
                   <TaskPriority priority={task.priority} />
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
@@ -70,13 +71,24 @@ export default function TaskList({ tasks, onEdit }: Props) {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">{task.assignee_id || 'Unassigned'}</td>
                 <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() => onEdit?.(task.id)}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md"
-                  >
-                    <FaEdit className="mr-2" />
-                    Edit
-                  </button>
+                  <div className="flex items-center justify-start space-x-2">
+                    <button
+                      onClick={() => onEdit?.(task.id)}
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md"
+                    >
+                      <FaEdit className="mr-1" />
+                      
+                    </button>
+                    {onDelete && (
+                      <button
+                        onClick={() => onDelete(task.id)}
+                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md"
+                      >
+                        <FaTrash className="mr-1" />
+                        
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -97,12 +109,22 @@ export default function TaskList({ tasks, onEdit }: Props) {
                 <div className="flex-1">
                   <TaskTitle task={{ title: task.title, description: task.description }} />
                 </div>
-                <button
-                  onClick={() => onEdit?.(task.id)}
-                  className="ml-4 inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105 shadow-sm"
-                >
-                  <FaEdit />
-                </button>
+                <div className="ml-4 flex items-center space-x-2">
+                  <button
+                    onClick={() => onEdit?.(task.id)}
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105 shadow-sm"
+                  >
+                    <FaEdit />
+                  </button>
+                  {onDelete && (
+                    <button
+                      onClick={() => onDelete(task.id)}
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 transform hover:scale-105 shadow-sm"
+                    >
+                      <FaTrash />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Task Details Grid */}
