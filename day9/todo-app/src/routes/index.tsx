@@ -70,6 +70,7 @@ const Navigation = () => {
             })}
             <button
               onClick={() => {
+                if (!confirm('Are you sure you want to logout?')) return;
                 setUser(null); // Clear user context on logout
                 navigate('/login'); // Redirect to login page on logout
               }}
