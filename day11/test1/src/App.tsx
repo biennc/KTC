@@ -1,19 +1,25 @@
-import UserList from "./UserList"
-import { UserProvider } from "./UserProvider"
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { UserProvider } from "./UserProvider";
+import Navigation from "./components/Navigation";
+import Home from "./pages/Home";
+import Users from "./pages/Users";
+import UserDetail from "./pages/UserDetail";
 
 function App() {
   return (
     <UserProvider>
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto py-8">
-          <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-            User List
-          </h1>
-
-          {/* User Management with integrated form */}
-          <UserList />
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Navigation />
+          <div className="container mx-auto py-8">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/users/:id" element={<UserDetail />} />
+            </Routes>
+          </div>
         </div>
-      </div>
+      </Router>
     </UserProvider>
   )
 }

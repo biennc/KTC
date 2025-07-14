@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useUsers } from './UserProvider';
+import  { type UserData } from './UserProvider';
 
 const signUpSchema = yup.object().shape({
   name: yup.string().min(2, "Minimum 2 characters").required('Name is required'),
@@ -27,13 +28,9 @@ export const Signup: React.FC<{ initialEmail: string }> = ({ initialEmail }) => 
     defaultValues: { email: initialEmail },
   });
 
-  const onSubmit = (data: Record<string, unknown>) => {
+  const onSubmit = (data: UserData) => {
     try {
-      const newUser = addUser({
-        name: data.name as string,
-        email: data.email as string,
-        age: data.age as number | undefined,
-      });
+      const newUser = addUser(data);
 
       console.log('User added successfully:', newUser);
       reset();
