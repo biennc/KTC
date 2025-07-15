@@ -10,11 +10,6 @@ import { TaskCard } from "@/app/components/task-card"
 import { TaskForm } from "@/app/components/task-form"
 import { Plus, CheckSquare } from "lucide-react"
 
-// interface TaskFormProps {
-//   onSubmit: (task: Omit<Task, "id" | "createdAt" | "updatedAt">) => void
-//   onCancel?: () => void
-// }
-
 export default function TasksPage() {
   const { user } = useAuth()
   const router = useRouter()
@@ -42,9 +37,12 @@ export default function TasksPage() {
     }
   }
 
-  const handleCreateTask = async (taskData: Omit<Task, "id" | "createdAt" | "updatedAt">) => {
+  const handleCreateTask = async (taskData: Omit<Task, "id" | "createdAt" | "updatedAt" | "completed">) => {
     try {
-      const newTask = await createTask(taskData)
+      const newTask = await createTask({
+        ...taskData,
+        completed: false
+      })
       setTasks((prev) => [newTask, ...prev])
       setShowForm(false)
     } catch (error) {
@@ -54,7 +52,7 @@ export default function TasksPage() {
 
   const handleToggleTask = async (id: number, completed: boolean) => {
     try {
-      const updatedTask = await updateTask(id, { completed })
+      // const updatedTask = await updateTask(id, { completed })
       setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, completed } : task)))
     } catch (error) {
       console.error("Failed to update task:", error)
