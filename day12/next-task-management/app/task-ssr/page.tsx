@@ -1,10 +1,17 @@
 import { fetchTasks } from "@/app/lib/api"
 import { Navigation } from "@/app/components/navigation"
 import { TaskCard } from "@/app/components/task-card"
+import type { Task } from "@/app/lib/constants"
 
 // Server Side Rendering - data fetched on each request
 export default async function TaskSSRPage() {
-  const tasks = await fetchTasks()
+let tasks: Array<Task> = [];
+  try {
+    tasks = await fetchTasks();
+  } catch (error) {
+    console.log(error);
+    tasks = [];
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

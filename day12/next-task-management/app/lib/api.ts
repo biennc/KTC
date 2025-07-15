@@ -19,12 +19,21 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}) {
       ...options,
       signal: controller.signal,
       headers: {
-        ...getDefaultHeaders(),
+        ...getDefaultHeaders(), // This will include the token from localStorage or default
         ...options.headers,
       },
     })
 
     clearTimeout(timeoutId)
+
+    // Handle 401 Unauthorized only on the client-side
+    if (response.status === 401 && typeof window !== "undefined") {
+      console.warn("Unauthorized access - clearing auth data and redirecting to login")
+      localStorage.removeItem("token")
+      localStorage.removeItem("user")
+      window.location.href = "/login" // Redirect to login page
+      throw new ApiError("Unauthorized - please login again", 401)
+    }
 
     if (!response.ok) {
       throw new ApiError(`HTTP error! status: ${response.status}`, response.status)
@@ -33,6 +42,12 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}) {
     return response
   } catch (error) {
     clearTimeout(timeoutId)
+
+    // Handle network errors
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      throw new ApiError("Network error - please check your connection", 0)
+    }
+
     throw error
   }
 }
@@ -46,10 +61,22 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}) {
  */
 export async function login(username: string, password: string): Promise<User> {
   try {
-    const response = await fetchWithTimeout(`${apiBaseUrl}/auth/login`, {
+    // For login, we don't use the Authorization header initially
+    const response = await fetch(`${apiBaseUrl}/auth/login`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify({ username, password }),
     })
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error("Invalid username or password")
+      }
+      throw new Error(`Login failed: ${response.status}`)
+    }
 
     const data = await response.json()
     console.log("Login API response:", data) // Debug log
@@ -78,12 +105,12 @@ export async function login(username: string, password: string): Promise<User> {
         email: data.email || username,
       }
     } else {
-      // Fallback - create user from response
-      token = "mock-token-" + Date.now()
+      // If no clear structure, assume the whole response is user data
+      token = data.token || "generated-token-" + Date.now()
       user = {
-        id: 1,
-        username: username,
-        email: username,
+        id: data.id || 1,
+        username: data.username || username,
+        email: data.email || username,
       }
     }
 
@@ -92,7 +119,7 @@ export async function login(username: string, password: string): Promise<User> {
       throw new Error("Invalid response: missing user data")
     }
 
-    // Save to localStorage
+    // Save to localStorage only on the client-side
     if (typeof window !== "undefined") {
       localStorage.setItem("token", token)
       localStorage.setItem("user", JSON.stringify(user))
@@ -105,8 +132,9 @@ export async function login(username: string, password: string): Promise<User> {
 
     // For development - create mock login if API fails
     if (username === "tungnt@softech.vn" && password === "123456789") {
-      console.log("Using mock login for development")
-      const mockToken = "mock-token-" + Date.now()
+      console.log("API failed, using mock login for development")
+      const mockToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0dW5nbnRAc29mdGVjaC52biIsImVtYWlsIjoidHVuZ250QHNvZnRlY2gudm4iLCJzdWIiOjEsImFwcGxpY2F0aW9uIjoiT25saW5lIFNob3AgLSBBUEkiLCJyb2xlcyI6W3siaWQiOjEsIm5hbWUiOiJBZG1pbmlzdHJhdG9ycyJ9LHsiaWQiOjIsIm5hbWUiOiJNYW5hZ2VycyJ9XSwiaWF0IjE3NTI1ODcxOTAsImV4cCI6MTc4NDE0NDc5MH0.YRksaoMJ9IzRa1JIivh-xGblwz43isx0WO0jyg_FEOs"
       const mockUser: User = {
         id: 1,
         username: username,
@@ -121,7 +149,51 @@ export async function login(username: string, password: string): Promise<User> {
       return mockUser
     }
 
-    throw new Error("Login failed")
+    throw error
+  }
+}
+
+/**
+ * Check if user is authenticated (client-side only)
+ */
+export function isAuthenticated(): boolean {
+  if (typeof window === "undefined") {
+    // Always return false on the server, as localStorage is not available
+    return false
+  }
+
+  const token = localStorage.getItem("token")
+  const user = localStorage.getItem("user")
+
+  return !!(token && token !== "undefined" && user && user !== "undefined")
+}
+
+/**
+ * Get current user from localStorage (client-side only)
+ */
+export function getCurrentUser(): User | null {
+  if (typeof window === "undefined") {
+    return null
+  }
+
+  try {
+    const userStr = localStorage.getItem("user")
+    if (!userStr || userStr === "undefined") return null
+
+    return JSON.parse(userStr)
+  } catch (error) {
+    console.error("Error parsing user from localStorage:", error)
+    return null
+  }
+}
+
+/**
+ * Logout user (client-side only)
+ */
+export function logout(): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
   }
 }
 
@@ -131,6 +203,13 @@ export async function login(username: string, password: string): Promise<User> {
  * @throws Error if the request fails
  */
 export async function fetchTasks(): Promise<Task[]> {
+  // Removed isAuthenticated() check here.
+  // Server Components (SSR, SSG, ISR) will call this directly.
+  // The `fetchWithTimeout` function will handle the Authorization header
+  // using the default token from constants.ts if localStorage is not available.
+  // If the API returns 401, it will be handled by fetchWithTimeout (client-side redirect)
+  // or propagate as an ApiError (server-side).
+
   try {
     const response = await fetchWithTimeout(`${apiBaseUrl}/workspaces/tasks`)
     const data = await response.json()
@@ -147,7 +226,14 @@ export async function fetchTasks(): Promise<Task[]> {
     return []
   } catch (error) {
     console.error("Failed to fetch tasks:", error)
-    // Return mock data if API fails
+
+    // If it's an auth error, don't return mock data
+    if (error instanceof ApiError && error.status === 401) {
+      throw error // Re-throw to be caught by client-side useEffect or server-side error handling
+    }
+
+    // Return mock data for other errors (network, server, etc.)
+    console.log("Using mock data due to API error")
     return [
       {
         id: 1,
@@ -189,6 +275,7 @@ export async function fetchTasks(): Promise<Task[]> {
  * @throws Error if the request fails
  */
 export async function fetchTaskById(id: number | string): Promise<Task | null> {
+  // Removed isAuthenticated() check here.
   try {
     const response = await fetchWithTimeout(`${apiBaseUrl}/workspaces/tasks/${id}`)
     const data = await response.json()
@@ -205,6 +292,11 @@ export async function fetchTaskById(id: number | string): Promise<Task | null> {
     return null
   } catch (error) {
     console.error(`Failed to fetch task ${id}:`, error)
+
+    if (error instanceof ApiError && error.status === 401) {
+      throw error
+    }
+
     // Return mock data if API fails
     const tasks = await fetchTasks()
     return tasks.find((task) => task.id === Number(id)) || null
@@ -218,6 +310,11 @@ export async function fetchTaskById(id: number | string): Promise<Task | null> {
  * @throws Error if the request fails
  */
 export async function createTask(task: Omit<Task, "id" | "createdAt" | "updatedAt">): Promise<Task> {
+  if (!isAuthenticated()) {
+    // This function is likely called from a client component, so isAuthenticated() is fine here.
+    throw new Error("Not authenticated")
+  }
+
   try {
     const response = await fetchWithTimeout(`${apiBaseUrl}/workspaces/tasks`, {
       method: "POST",
@@ -244,6 +341,11 @@ export async function createTask(task: Omit<Task, "id" | "createdAt" | "updatedA
     }
   } catch (error) {
     console.error("Failed to create task:", error)
+
+    if (error instanceof ApiError && error.status === 401) {
+      throw error
+    }
+
     // Return mock created task if API fails
     return {
       ...task,
@@ -261,49 +363,17 @@ export async function createTask(task: Omit<Task, "id" | "createdAt" | "updatedA
  * @returns Promise that resolves to the updated task
  * @throws Error if the request fails
  */
-export async function updateTask(id: number, task: Partial<Task>): Promise<Task> {
-  try {
-    // Remove id from the body as per original service
-    const { id: _, ...taskData } = task as any
-
-    const response = await fetchWithTimeout(`${apiBaseUrl}/workspaces/tasks/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(taskData),
-    })
-
-    const data = await response.json()
-
-    // Handle different response structures
-    if (data.id) {
-      return data
-    } else if (data.data && data.data.id) {
-      return data.data
-    } else if (data.task && data.task.id) {
-      return data.task
-    }
-
-    // Fallback - merge with existing data
-    const tasks = await fetchTasks()
-    const existingTask = tasks.find((t) => t.id === id)
-    return {
-      ...existingTask!,
-      ...task,
-      id,
-      updatedAt: new Date().toISOString(),
-    }
-  } catch (error) {
-    console.error(`Failed to update task ${id}:`, error)
-    // Return mock updated task if API fails
-    const tasks = await fetchTasks()
-    const existingTask = tasks.find((t) => t.id === id)
-    return {
-      ...existingTask!,
-      ...task,
-      id,
-      updatedAt: new Date().toISOString(),
-    }
+export const updateTask = async (id: number, p0: { priority: "low" | "medium" | "high" }, completed: boolean, task: Task): Promise<Task> => {
+  const response = await fetch(`${apiBaseUrl}/workspaces/tasks/${task.id}`, {
+    method: 'PATCH',
+    headers: getDefaultHeaders(),
+    body: JSON.stringify({ ...task, id, p0, completed }), // Exclude id from the body
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update task');
   }
-}
+  return await response.json();
+};
 
 /**
  * Deletes a task by its ID
@@ -312,6 +382,10 @@ export async function updateTask(id: number, task: Partial<Task>): Promise<Task>
  * @throws Error if the request fails
  */
 export async function deleteTask(id: number | string): Promise<void> {
+  if (!isAuthenticated()) {
+    throw new Error("Not authenticated")
+  }
+
   try {
     await fetchWithTimeout(`${apiBaseUrl}/workspaces/tasks/${id}`, {
       method: "DELETE",
@@ -319,6 +393,11 @@ export async function deleteTask(id: number | string): Promise<void> {
     console.log(`Task ${id} deleted successfully`)
   } catch (error) {
     console.error(`Failed to delete task ${id}:`, error)
+
+    if (error instanceof ApiError && error.status === 401) {
+      throw error
+    }
+
     // Silently handle delete errors for demo
     console.log("Task deleted (mock)")
   }
@@ -331,6 +410,10 @@ export async function deleteTask(id: number | string): Promise<void> {
  * @throws Error if the request fails
  */
 export async function fetchTasksByAssignee(assigneeId: number | string): Promise<Task[]> {
+  if (!isAuthenticated()) {
+    throw new Error("Not authenticated")
+  }
+
   try {
     const response = await fetchWithTimeout(`${apiBaseUrl}/workspaces/tasks/assignee/${assigneeId}`)
     const data = await response.json()
@@ -347,9 +430,14 @@ export async function fetchTasksByAssignee(assigneeId: number | string): Promise
     return []
   } catch (error) {
     console.error(`Failed to fetch tasks for assignee ${assigneeId}:`, error)
+
+    if (error instanceof ApiError && error.status === 401) {
+      throw error
+    }
+
     // Return filtered mock data if API fails
     const allTasks = await fetchTasks()
-    return allTasks.filter((task: any) => task.assigneeId === assigneeId)
+    return allTasks.filter((task: Task) => task.assigneeId === assigneeId)
   }
 }
 
@@ -361,8 +449,8 @@ export async function fetchTasksByAssignee(assigneeId: number | string): Promise
  * @param completed - New completion status
  * @returns Promise that resolves to the updated task
  */
-export async function toggleTaskCompletion(id: number, completed: boolean): Promise<Task> {
-  return updateTask(id, { completed })
+export async function toggleTaskCompletion(id: number, p0: { priority: "low" | "medium" | "high" }, completed: boolean, task: Task): Promise<Task> {
+  return updateTask(id, p0, completed, task )
 }
 
 /**
@@ -371,8 +459,8 @@ export async function toggleTaskCompletion(id: number, completed: boolean): Prom
  * @param priority - New priority level
  * @returns Promise that resolves to the updated task
  */
-export async function updateTaskPriority(id: number, priority: "low" | "medium" | "high"): Promise<Task> {
-  return updateTask(id, { priority })
+export async function updateTaskPriority(id: number, p0: { priority: "low" | "medium" | "high" }, completed: boolean, task: Task): Promise<Task> {
+  return updateTask(id, p0, completed, task )
 }
 
 /**

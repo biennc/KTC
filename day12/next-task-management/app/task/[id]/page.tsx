@@ -4,8 +4,9 @@ import { TaskCard } from "@/app/components/task-card"
 import { notFound } from "next/navigation"
 
 // Incremental Static Regeneration - static with revalidation
-export default async function TaskISRPage({ params }: { params: { id: string } }) {
-  const taskId = Number.parseInt(params.id)
+export default async function TaskISRPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const taskId = Number.parseInt(id)
   const task = await fetchTaskById(taskId)
 
   if (!task) {
@@ -36,11 +37,16 @@ export default async function TaskISRPage({ params }: { params: { id: string } }
 
 // Generate static params for existing tasks
 export async function generateStaticParams() {
-  const tasks = await fetchTasks()
-
-  return tasks.map((task) => ({
-    id: task.id.toString(),
-  }))
+  try {
+    const tasks = await fetchTasks();
+    return tasks.map((task) => ({
+      id: task.id.toString(),
+    }));
+  } catch (error) {
+    console.log(error);
+    
+    return [];
+  }
 }
 
 // Revalidate every 60 seconds

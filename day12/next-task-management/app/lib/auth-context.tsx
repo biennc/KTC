@@ -13,42 +13,42 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    // Check if user is logged in on mount
-    try {
-      const savedUser = localStorage.getItem("user")
-      const savedToken = localStorage.getItem("token")
+  // useEffect(() => {
+  //   // Check if user is logged in on mount
+  //   try {
+  //     const savedUser = localStorage.getItem("user")
+  //     const savedToken = localStorage.getItem("token")
 
-      console.log("Checking localStorage:", { savedUser, savedToken }) // Debug log
+  //     console.log("Checking localStorage:", { savedUser, savedToken }) // Debug log
 
-      if (savedUser && savedUser !== "undefined" && savedToken && savedToken !== "undefined") {
-        const parsedUser = JSON.parse(savedUser)
-        console.log("Restored user from localStorage:", parsedUser) // Debug log
-        setUser(parsedUser)
-      } else {
-        console.log("No valid user data in localStorage") // Debug log
-      }
-    } catch (error) {
-      console.error("Error reading from localStorage:", error)
-      // Clear invalid data
-      localStorage.removeItem("user")
-      localStorage.removeItem("token")
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+  //     if (savedUser && savedUser !== "undefined" && savedToken && savedToken !== "undefined") {
+  //       const parsedUser = JSON.parse(savedUser)
+  //       console.log("Restored user from localStorage:", parsedUser) // Debug log
+  //       setUser(parsedUser)
+  //     } else {
+  //       console.log("No valid user data in localStorage") // Debug log
+  //     }
+  //   } catch (error) {
+  //     console.error("Error reading from localStorage:", error)
+  //     // Clear invalid data
+  //     localStorage.removeItem("user")
+  //     localStorage.removeItem("token")
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }, [])
 
   const logout = () => {
-    console.log("Logging out user") // Debug log
+    console.log("Logging out user")
     localStorage.removeItem("user")
     localStorage.removeItem("token")
     setUser(null)
   }
 
   const updateUser = (newUser: User | null) => {
-    console.log("Updating user:", newUser) // Debug log
+    console.log("Updating user:", newUser)
     setUser(newUser)
     if (newUser && typeof window !== "undefined") {
       localStorage.setItem("user", JSON.stringify(newUser))
