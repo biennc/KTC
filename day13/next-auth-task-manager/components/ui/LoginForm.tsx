@@ -6,22 +6,19 @@ import { signIn, useSession } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import React, { ChangeEvent, useState } from 'react';
 
-
-
-export const LoginForm = ({csrfToken}: {csrfToken: string | undefined}) => {
+export const LoginForm = ({ csrfToken }: { csrfToken: string | undefined }) => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-  
+
   const { status } = useSession()
 
-  React.useEffect(()=>{
-    if (status  === 'authenticated') {
+  React.useEffect(() => {
+    if (status === 'authenticated') {
       router.push(callbackUrl);
-  }
-  },[status,router,callbackUrl])
-
+    }
+  }, [status, router, callbackUrl])
 
   const [loading, setLoading] = useState({
     accLoading: false,
@@ -29,12 +26,10 @@ export const LoginForm = ({csrfToken}: {csrfToken: string | undefined}) => {
     facebookLoading: false
   });
   const [formValues, setFormValues] = useState({
-    email: '',
-    password: '',
+    email: 'tungnt@softech.vn',
+    password: '123456789',
   });
   const [error, setError] = useState('');
-
-
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +38,6 @@ export const LoginForm = ({csrfToken}: {csrfToken: string | undefined}) => {
         ...loading,
         accLoading: true,
       });
-      setFormValues({ email: 'john@mail.com', password: 'changeme' });
-
       const res = await signIn('credentials', {
         redirect: false,
         email: formValues.email,
@@ -57,8 +50,6 @@ export const LoginForm = ({csrfToken}: {csrfToken: string | undefined}) => {
         ...loading,
         accLoading: false,
       });
-
-      console.log(res);
       if (!res?.error) {
         router.push(callbackUrl);
       } else {
@@ -85,25 +76,22 @@ export const LoginForm = ({csrfToken}: {csrfToken: string | undefined}) => {
         googleLoading: provider === 'google',
         facebookLoading: provider === 'facebook'
       });
-      const res = await signIn(provider, {redirect: false,callbackUrl});
-      console.log('handleLoginProvider',res);
+      const res = await signIn(provider, { redirect: false, callbackUrl });
+      console.log('handleLoginProvider', res);
       //TODO: add new usser Account after then login Provider
       if (!res?.error) {
         router.push(callbackUrl);
       } else {
         setError('invalid email or password');
       }
-  } catch (error: any) {
-    setLoading({
-      ...loading,
-      googleLoading: false,
-      facebookLoading: false
-    });
-    setError(error);
-  }
-   
-
-    
+    } catch (error: any) {
+      setLoading({
+        ...loading,
+        googleLoading: false,
+        facebookLoading: false
+      });
+      setError(error);
+    }
   }
 
   return (
@@ -113,17 +101,13 @@ export const LoginForm = ({csrfToken}: {csrfToken: string | undefined}) => {
       {error && <p className="text-center bg-red-300 py-4 my-3 rounded">{error}</p>}
       <div className="mb-2">
         <input required type="email" name="email" value={formValues.email} onChange={handleChange} placeholder="Email address" />
-        <p className='text-left text-xs text-slate-500 my-1'>Email test: tungnt@softech.vn</p>
       </div>
       <div className="mb-2">
         <input required type="password" name="password" value={formValues.password} onChange={handleChange} placeholder="Password" />
-        <p className='text-left text-xs text-slate-500 my-1'>Password test: 123456789</p>
       </div>
       <button className="w-full" type="submit" disabled={loading.accLoading}>
         {loading.accLoading ? 'loading...' : 'Sign In'}
       </button>
-
-
     </form>
   );
 };

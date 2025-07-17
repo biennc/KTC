@@ -1,7 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 
-
 const Profile = async () => {
      const session = await getServerSession(authOptions)
      if(!session || !session.user) {
@@ -21,7 +20,7 @@ const Profile = async () => {
         return 'Error fetching profile data';
     }
     const data = await response.json();
-    console.log('data ddd',data);
+    console.log('data: ',data);
 
   return (
     <div>
