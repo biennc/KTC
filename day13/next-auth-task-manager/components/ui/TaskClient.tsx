@@ -1,6 +1,10 @@
 'use client'
 
 import { useEffect, useState } from "react"
+import { useSession } from 'next-auth/react';
+import { FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { isAdministrator, getUserRoles } from "@/app/utils/Permission";
+import ButtonWithPermissions from './ButtonWithPermission';
 
 interface TasksData {
     id: string | number;
@@ -24,15 +28,20 @@ const TasksClient = () => {
    const [data, setData] = useState<TasksData[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const { data: session } = useSession();
+
+    // Check user roles
+    const userRoles = getUserRoles(session || {});
+    const hasAdminRole = isAdministrator(userRoles);
 
     useEffect(() => {
         const fetchTask = async () => {
             try {
-                const res = await fetch('/api/tasks', {
-        headers: {
-        'Authorization': `Bearer xxxxx`,
-        },
-    })
+                const res = await fetch(`${process.env.NEXTAUTH_URL}/workspaces/tasks`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
                 if (!res.ok) throw new Error('Lỗi khi lấy dữ liệu task')
                 const task = await res.json()
                 setData(task.data)
@@ -116,11 +125,50 @@ const TasksClient = () => {
     )
 
   return (
-    <div className="p-6">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Task Management (Client)</h1>
+    <div className="h-full flex flex-col bg-gray-50">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Task Management (Client)</h1>
+                    <p className="text-sm text-gray-600 mt-1">Client-side interactive task management</p>
+                </div>
 
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-            <table className="min-w-full table-auto">
+                {/* Add Task Button - Only visible to Administrators */}
+                <ButtonWithPermissions
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm"
+                >
+                    <FaPlus className="w-4 h-4" />
+                    Add Task
+                </ButtonWithPermissions>
+            </div>
+
+            {/* User Role Info */}
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-4">
+                        <span className="text-gray-700">
+                            <strong>User:</strong> {session?.user?.email || 'Unknown'}
+                        </span>
+                        <span className="text-gray-700">
+                            <strong>Roles:</strong> {userRoles.map(role => role.name).join(', ') || 'No roles'}
+                        </span>
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        hasAdminRole
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                    }`}>
+                        {hasAdminRole ? 'Admin Access' : 'User Access'}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-auto p-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <table className="min-w-full table-auto">
                 <thead className="bg-gray-50">
                     <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
@@ -130,6 +178,7 @@ const TasksClient = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assignee ID</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -163,14 +212,42 @@ const TasksClient = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {task.assignee?.id || task.assignee_id || 'N/A'}
                             </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div className="flex items-center gap-2">
+                                    {/* View Button - Always visible */}
+                                    <button
+                                        className="text-blue-600 hover:text-blue-900 p-1 rounded"
+                                        title="View Task"
+                                    >
+                                        <FaEye className="w-4 h-4" />
+                                    </button>
+
+                                    {/* Edit Button - Only for Administrators */}
+                                    <ButtonWithPermissions
+                                        className="text-yellow-600 hover:text-yellow-900 p-1 rounded"
+                                    >
+                                        <FaEdit className="w-4 h-4" />
+                                    </ButtonWithPermissions>
+
+                                    {/* Delete Button - Only for Administrators */}
+                                    <ButtonWithPermissions
+                                        className="text-red-600 hover:text-red-900 p-1 rounded"
+                                    >
+                                        <FaTrash className="w-4 h-4" />
+                                    </ButtonWithPermissions>
+                                </div>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
-            </table>
-        </div>
+                </table>
 
-        <div className="mt-4 text-sm text-gray-600">
-            Total tasks: {data.length}
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                    <div className="text-sm text-gray-600">
+                        Total tasks: {data.length}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
   )

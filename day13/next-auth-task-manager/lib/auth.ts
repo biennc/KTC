@@ -2,6 +2,10 @@ import type { NextAuthOptions, Session, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 
+interface UserRole {
+  id: string | number;
+  name: string;
+}
 
 interface UserType {
   id: string;
@@ -10,19 +14,18 @@ interface UserType {
   avatar: string;
   accessToken: string;
   refreshToken: string;
+  roles: UserRole[];
 }
 
 export const authOptions: NextAuthOptions = {
   debug: true,
   pages: {
-    signIn: "/login", //Dẫn đến trang login custom
-    // error: "/auth/error", // Custom error page
+    signIn: "/login",
   },
   session: {
     strategy: "jwt",
   },
   providers: [
-   
     CredentialsProvider({
       name: "Sign in",
       credentials: {
@@ -33,7 +36,7 @@ export const authOptions: NextAuthOptions = {
         },
         password: { label: "Password", type: "password" },
       },
-      authorize: async(credentials) => {
+      authorize: async (credentials) => {
         if (!credentials?.email || !credentials.password) {
           return null;
         }
@@ -43,36 +46,23 @@ export const authOptions: NextAuthOptions = {
           password: credentials.password,
         };
 
-        //console.log('<<=== 🚀 payload ===>>',payload);
-
-        // const res = await fetch('https://api.escuelajs.co/api/v1/auth/login', {
-        //   method: 'POST',
-        //   body: JSON.stringify(payload),
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        // });
-
-        const res = await fetch('https://server.aptech.io/auth/login', {
-          method: 'POST',
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/auth/login`, {
+          method: "POST",
           body: JSON.stringify({
             username: credentials.email,
             password: credentials.password,
           }),
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
 
         const tokens = await res.json();
 
-        console.log('<<=== 🚀 tokens ===>>',tokens);
-
         if (!res.ok) {
           throw new Error("UnAuthorized");
         }
         if (tokens) {
-          // Return user object with accessToken and refreshToken
           return {
             id: tokens.loggedInUser.id,
             name: tokens.loggedInUser.name,
@@ -80,32 +70,28 @@ export const authOptions: NextAuthOptions = {
             avatar: tokens.loggedInUser.avatar,
             accessToken: tokens.access_token,
             refreshToken: tokens.refresh_token,
+            roles: tokens.loggedInUser.roles, // Thêm roles từ API response
           } as UserType;
         }
 
-        // Return null if user data could not be retrieved
         return null;
       },
     }),
   ],
   callbacks: {
-    
-    async jwt({ token, user} : { token: JWT; user: User }) {
-      //console.log('callbacks jwt', token, user);
+    async jwt({ token, user }: { token: JWT; user: User }) {
       if (user) {
         return {
           ...token,
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,
+          roles: user.roles,
         };
       }
-
       return token;
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
-      //console.log('callbacks session', token);
-      // Create a user object with token properties
       const userObject: UserType = {
         id: token.id as string,
         avatar: (token.avatar as string) ?? "",
@@ -113,16 +99,14 @@ export const authOptions: NextAuthOptions = {
         accessToken: (token.accessToken as string) ?? "",
         refreshToken: (token.refreshToken as string) ?? "",
         email: (token.email as string) ?? "",
+        roles: (token.roles as UserRole[]) ?? [],
       };
 
-      // Add the user object to the session
       session.user = userObject;
       return session;
     },
   },
 };
-
-
 
 declare module "next-auth" {
   interface User extends UserType {}
@@ -131,11 +115,14 @@ declare module "next-auth" {
 declare module "next-auth" {
   interface Session {
     user: UserType & {
-      accessToken?: string
-    }
+      accessToken?: string;
+      roles?: UserRole[];
+    };
   }
 }
 
 declare module "next-auth/jwt" {
-  interface JWT extends UserType {}
+  interface JWT extends UserType {
+    roles?: UserRole[];
+  }
 }

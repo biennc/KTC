@@ -2,47 +2,43 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
+const authUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-export async function GET(request: Request, res: Response) {
+export async function GET() {
   const session = await getServerSession(authOptions);
-  console.log('<<=== 🚀 session ===>>',session);
 
   if (!session || !session.user) {
-    return new NextResponse(
-      JSON.stringify({ status: "fail", message: "You are not logged in" }),
+    return NextResponse.json(
+      { status: "fail", message: "You are not logged in" },
       { status: 401 }
     );
   }
 
-
-  //fetch api với Authorization header
-   try {
-     const response = await fetch('https://api.escuelajs.co/api/v1/auth/profile', {
-        headers: {
-        'Authorization': `Bearer ${session.user.accessToken}`,
-        },
+  try {
+    const response = await fetch(`${authUrl}/auth/me`, {
+      headers: {
+        "Authorization": `Bearer ${session.user.accessToken}`,
+      },
     });
+
     if (!response.ok) {
-      return new NextResponse(
-        JSON.stringify({ status: "error", message: "Failed to fetch profile" }),
+      return NextResponse.json(
+        { status: "error", message: "Failed to fetch profile" },
         { status: response.status }
       );
     }
+
     const data = await response.json();
     return NextResponse.json({
-        status: "success", 
-        message: "Profile fetched successfully", 
-        data
+      status: "success",
+      message: "Profile fetched successfully",
+      data,
     });
-
-   } catch (error) {
-    console.log(error);
-    
-     return new NextResponse(
-      JSON.stringify({ status: "error", message: "An error occurred" }),
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { status: "error", message: "An error occurred" },
       { status: 500 }
     );
-   }
-   
-    
+  }
 }

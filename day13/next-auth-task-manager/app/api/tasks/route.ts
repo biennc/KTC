@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request, res: Response) {
   const session = await getServerSession(authOptions);
-  console.log('<<=== 🚀 session ===>>',session);
+  // console.log('<<=== 🚀 session ===>>',session);
 
   if (!session || !session.user) {
     return new NextResponse(

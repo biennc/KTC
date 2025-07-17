@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   description: 'Login desc'
 }
 
-
 export default async function Page() {
   const csrfToken = await getCsrfToken()
     return (

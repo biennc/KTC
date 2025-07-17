@@ -11,7 +11,7 @@ const Profile = async () => {
         )
      }
      //Gọi API trong server component
-    const response = await fetch('https://api.escuelajs.co/api/v1/auth/profile', {
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/auth/profile`, {
         headers: {
         'Authorization': `Bearer ${session.user.accessToken}`,
         },

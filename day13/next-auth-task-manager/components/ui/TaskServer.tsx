@@ -1,5 +1,7 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
+import { FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { isAdministrator, getUserRoles } from "@/app/utils/Permission";
 
 interface TaskData {
     id: number;
@@ -28,8 +30,12 @@ const TaskServer = async () => {
             </div>
         )
      }
-     //Gọi API trong server component
-    const response = await fetch('https://server.aptech.io/workspaces/tasks', {
+
+     // Check user roles
+     const userRoles = getUserRoles(session);
+     const hasAdminRole = isAdministrator(userRoles);
+
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/workspaces/tasks`, {
         headers: {
         'Authorization': `Bearer ${session.user.accessToken}`,
         },
@@ -88,11 +94,50 @@ const TaskServer = async () => {
     };
 
   return (
-    <div className="p-6">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Task Management</h1>
+    <div className="h-full flex flex-col bg-gray-50">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Task Management (Server)</h1>
+                    <p className="text-sm text-gray-600 mt-1">Server-side rendered task management</p>
+                </div>
 
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-            <table className="min-w-full table-auto">
+                {/* Add Task Button - Only visible to Administrators */}
+                {hasAdminRole && (
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                        <FaPlus className="w-4 h-4" />
+                        Add Task
+                    </button>
+                )}
+            </div>
+
+            {/* User Role Info */}
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-4">
+                        <span className="text-gray-700">
+                            <strong>User:</strong> {session?.user?.email || 'Unknown'}
+                        </span>
+                        <span className="text-gray-700">
+                            <strong>Roles:</strong> {userRoles.map(role => role.name).join(', ') || 'No roles'}
+                        </span>
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        hasAdminRole
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                    }`}>
+                        {hasAdminRole ? 'Admin Access' : 'User Access'}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-auto p-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <table className="min-w-full table-auto">
                 <thead className="bg-gray-50">
                     <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
@@ -102,12 +147,13 @@ const TaskServer = async () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assignee ID</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     {tasks.length === 0 ? (
                         <tr>
-                            <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                            <td colSpan={8} className="px-6 py-4 text-center text-gray-500">
                                 No tasks found
                             </td>
                         </tr>
@@ -142,15 +188,49 @@ const TaskServer = async () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {task.assignee?.id || task.assignee_id || 'N/A'}
                                 </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div className="flex items-center gap-2">
+                                        {/* View Button - Always visible */}
+                                        <button
+                                            className="text-blue-600 hover:text-blue-900 p-1 rounded"
+                                            title="View Task"
+                                        >
+                                            <FaEye className="w-4 h-4" />
+                                        </button>
+
+                                        {/* Edit Button - Only for Administrators */}
+                                        {hasAdminRole && (
+                                            <button
+                                                className="text-yellow-600 hover:text-yellow-900 p-1 rounded"
+                                                title="Edit Task"
+                                            >
+                                                <FaEdit className="w-4 h-4" />
+                                            </button>
+                                        )}
+
+                                        {/* Delete Button - Only for Administrators */}
+                                        {hasAdminRole && (
+                                            <button
+                                                className="text-red-600 hover:text-red-900 p-1 rounded"
+                                                title="Delete Task"
+                                            >
+                                                <FaTrash className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </td>
                             </tr>
                         ))
                     )}
                 </tbody>
-            </table>
-        </div>
+                </table>
 
-        <div className="mt-4 text-sm text-gray-600">
-            Total tasks: {tasks.length}
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                    <div className="text-sm text-gray-600">
+                        Total tasks: {tasks.length}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
   )

@@ -16,12 +16,17 @@ const ProfileClient =  () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await fetch('/api/profile')
+                const res = await fetch(`${process.env.NEXTAUTH_URL}/users/profile`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
                 if (!res.ok) throw new Error('Lỗi khi lấy dữ liệu profile')
                 const profile = await res.json()
                 setData(profile.data)
             } catch (err) {
-                setError(err.message || 'Lỗi không xác định')
+                console.log(err);
+                
             } finally {
                 setLoading(false)
             }

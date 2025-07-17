@@ -1,7 +1,5 @@
 'use client';
-/***
- * https://github.com/wpcodevo/nextauth-nextjs13-prisma
- */
+
 import { signIn, useSession } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import React, { ChangeEvent, useState } from 'react';
@@ -55,12 +53,13 @@ export const LoginForm = ({ csrfToken }: { csrfToken: string | undefined }) => {
       } else {
         setError('invalid email or password');
       }
-    } catch (error: any) {
+    } catch (error) {
       setLoading({
         ...loading,
         accLoading: false,
       });
-      setError(error);
+     console.log(error);
+     
     }
   };
 
@@ -84,13 +83,13 @@ export const LoginForm = ({ csrfToken }: { csrfToken: string | undefined }) => {
       } else {
         setError('invalid email or password');
       }
-    } catch (error: any) {
+    } catch (error) {
       setLoading({
         ...loading,
         googleLoading: false,
         facebookLoading: false
       });
-      setError(error);
+      console.log(error);
     }
   }
 
