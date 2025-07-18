@@ -141,7 +141,7 @@ const DashboardPage = () => {
           Welcome back, {session.user?.email?.split('@')[0] || 'User'}!
         </h1>
         <p className="text-blue-100 mb-4">
-          Here's what's happening with your tasks today.
+          Here&apos;s what&apos;s happening with your tasks today.
         </p>
         <div className="flex items-center space-x-4 text-sm">
           <span className="flex items-center">
@@ -205,17 +205,17 @@ const DashboardPage = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-sm">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-gray-600">Task "Complete project documentation" was completed</span>
+                <span className="text-gray-600">Task &quot;Complete project documentation&quot; was completed</span>
                 <span className="text-gray-400">2 hours ago</span>
               </div>
               <div className="flex items-center space-x-3 text-sm">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="text-gray-600">New task "Review code changes" was created</span>
+                <span className="text-gray-600">New task &quot;Review code changes&quot; was created</span>
                 <span className="text-gray-400">4 hours ago</span>
               </div>
               <div className="flex items-center space-x-3 text-sm">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <span className="text-gray-600">Task "Update dependencies" is due tomorrow</span>
+                <span className="text-gray-600">Task &quot;Update dependencies&quot; is due tomorrow</span>
                 <span className="text-gray-400">1 day ago</span>
               </div>
             </div>
