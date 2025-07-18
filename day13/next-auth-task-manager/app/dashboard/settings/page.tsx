@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { FaCog, FaUser, FaShieldAlt, FaBell, FaPalette } from "react-icons/fa";
+import { FaUser, FaShieldAlt, FaBell, FaPalette } from "react-icons/fa";
 import { getUserRoles, isAdministrator } from "@/app/utils/Permission";
 
 const SettingsPage = () => {

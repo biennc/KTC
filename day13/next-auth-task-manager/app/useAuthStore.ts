@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthState>()(
                 { type: '@AUTH/LOGIN/LOADING' }
               );
 
-              const response: any = (await fetch('https://server.aptech.io/auth/login', {
+              const response: any = (await fetch(`${process.env.NEXTAUTH_URL}/auth/login`, {
                 method: 'POST',
                 body: JSON.stringify({ username, password }),
                 headers: {

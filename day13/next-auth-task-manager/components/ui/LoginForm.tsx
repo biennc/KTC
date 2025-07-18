@@ -68,30 +68,30 @@ export const LoginForm = ({ csrfToken }: { csrfToken: string | undefined }) => {
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleLoginProvider = async (provider: string) => {
-    try {
-      setLoading({
-        ...loading,
-        googleLoading: provider === 'google',
-        facebookLoading: provider === 'facebook'
-      });
-      const res = await signIn(provider, { redirect: false, callbackUrl });
-      console.log('handleLoginProvider', res);
-      //TODO: add new usser Account after then login Provider
-      if (!res?.error) {
-        router.push(callbackUrl);
-      } else {
-        setError('invalid email or password');
-      }
-    } catch (error) {
-      setLoading({
-        ...loading,
-        googleLoading: false,
-        facebookLoading: false
-      });
-      console.log(error);
-    }
-  }
+  // const handleLoginProvider = async (provider: string) => {
+  //   try {
+  //     setLoading({
+  //       ...loading,
+  //       googleLoading: provider === 'google',
+  //       facebookLoading: provider === 'facebook'
+  //     });
+  //     const res = await signIn(provider, { redirect: false, callbackUrl });
+  //     console.log('handleLoginProvider', res);
+  //     //TODO: add new usser Account after then login Provider
+  //     if (!res?.error) {
+  //       router.push(callbackUrl);
+  //     } else {
+  //       setError('invalid email or password');
+  //     }
+  //   } catch (error) {
+  //     setLoading({
+  //       ...loading,
+  //       googleLoading: false,
+  //       facebookLoading: false
+  //     });
+  //     console.log(error);
+  //   }
+  // }
 
   return (
     <form onSubmit={onSubmit} className="text-center">
