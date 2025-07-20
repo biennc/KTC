@@ -18,6 +18,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://server.aptech.io';
     console.log('Tasks Assignee API: Calling:', `${apiUrl}/workspaces/tasks/assignee/${params.id}`);
     
+    // Create AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+
     const response = await fetch(`${apiUrl}/workspaces/tasks/assignee/${params.id}`, {
       method: 'GET',
       headers: {
@@ -26,7 +30,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         'User-Agent': 'NextJS-Proxy/1.0',
         ...(token && { 'Authorization': `Bearer ${token}` }),
       },
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     console.log('Tasks Assignee API: Response status:', response.status);
 
@@ -45,6 +52,15 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json(data);
   } catch (error) {
     console.error('Tasks Assignee API: Network/server error:', error);
+
+    // Handle timeout specifically
+    if (error instanceof Error && error.name === 'AbortError') {
+      return NextResponse.json(
+        { error: 'Request timeout', details: 'The server took too long to respond. Please try again.' },
+        { status: 408 }
+      );
+    }
+
     return NextResponse.json(
       { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

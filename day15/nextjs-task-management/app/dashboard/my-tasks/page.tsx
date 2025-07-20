@@ -1,39 +1,32 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useAuthStore } from "@/hooks/useAuthStore"
-import type { Task } from "@/lib/types"
+import { useTasksCache } from "@/hooks/useTasksCache"
 import api from "@/lib/axios"
-import { FaFlag, FaClock, FaPlay, FaCheck } from "react-icons/fa"
+import { FaFlag, FaClock, FaPlay, FaCheck, FaSyncAlt } from "react-icons/fa"
 
 export default function MyTasksPage() {
   const { user } = useAuthStore()
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchMyTasks()
-  }, [user])
-
-  const fetchMyTasks = async () => {
-    if (!user) return
-
-    try {
-      const response = await api.get(`/api/tasks/assignee/${user.id}`)
-      setTasks(response.data)
-    } catch (error) {
-      console.error("Error fetching my tasks:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const {
+    tasks,
+    loading,
+    error,
+    refreshTasks,
+    updateTaskInCache
+  } = useTasksCache(
+    user ? `/api/tasks/assignee/${user.id}` : '',
+    typeof user?.id === 'number' ? user.id : undefined
+  )
 
   const handleUpdateTaskStatus = async (taskId: number, status: "to_do" | "in_progress" | "completed") => {
     try {
       const response = await api.patch(`/api/tasks/${taskId}`, { status })
-      setTasks(tasks.map((task) => (task.id === taskId ? { ...task, status } : task)))
+      // Update cache immediately for better UX
+      updateTaskInCache(taskId, { status })
     } catch (error) {
       console.error("Error updating task status:", error)
+      // Refresh tasks to get correct state if update failed
+      refreshTasks()
     }
   }
 
@@ -70,17 +63,47 @@ export default function MyTasksPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-3 border-b-3 border-green-500 mx-auto mb-3"></div>
+          <div className="space-y-1">
+            <h3 className="text-md font-medium text-gray-700">Loading Tasks...</h3>
+            <p className="text-xs text-gray-500">Fetching your assigned tasks</p>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">My Tasks</h1>
-        <p className="text-gray-600">Tasks assigned to you</p>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">My Tasks</h1>
+          <p className="text-gray-600">Tasks assigned to you</p>
+        </div>
+        <button
+          onClick={() => refreshTasks()}
+          className="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
+          title="Refresh Tasks"
+        >
+          <FaSyncAlt className="mr-2" />
+          Refresh
+        </button>
       </div>
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-700 text-sm">
+            <strong>Error loading tasks:</strong> {error}
+          </p>
+          <button
+            onClick={() => refreshTasks()}
+            className="mt-2 text-red-600 hover:text-red-800 text-sm underline"
+          >
+            Try again
+          </button>
+        </div>
+      )}
 
       {/* Tasks Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">

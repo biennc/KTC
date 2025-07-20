@@ -132,7 +132,13 @@ export default function TasksPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-3 border-b-3 border-orange-500 mx-auto mb-3"></div>
+          <div className="space-y-1">
+            <h3 className="text-md font-medium text-gray-700">Loading All Tasks...</h3>
+            <p className="text-xs text-gray-500">Fetching task management data</p>
+          </div>
+        </div>
       </div>
     )
   }

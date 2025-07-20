@@ -3,6 +3,7 @@ import type { NavigateFunction } from 'react-router';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { setAxiosToken } from '@/lib/axios';
+import { clearTasksCache } from './useTasksCache';
 
 export interface LoggedInUser {
   id: string | number;
@@ -111,11 +112,14 @@ export const useAuthStore = create<AuthState>()(
 
         console.log('Auth: Logout successful');
       } catch (e) {
-        console.warn('Auth: Failed to notify server on logout:', e);
+        console.log('Auth: Failed to notify server on logout:', e);
       }
 
       // Clear axios token
       setAxiosToken(null);
+
+      // Clear tasks cache
+      clearTasksCache();
 
       set({ access_token: undefined, loggedInUser: undefined });
     },

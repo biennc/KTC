@@ -2,7 +2,7 @@ import axios from "axios"
 
 const api = axios.create({
   baseURL: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
-  timeout: 10000,
+  timeout: 5000, // Reduced from 10s to 5s for better UX
 })
 
 // Global variable to store current token
