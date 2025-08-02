@@ -37,7 +37,7 @@ const TasksClient = () => {
     useEffect(() => {
         const fetchTask = async () => {
             try {
-                const res = await fetch(`${process.env.NEXTAUTH_URL}/workspaces/tasks`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/workspaces/tasks`, {
                     headers: {
                         'Content-Type': 'application/json',
                     },

@@ -364,7 +364,7 @@ export async function createTask(task: Omit<Task, "id" | "createdAt" | "updatedA
  * @throws Error if the request fails
  */
 export const updateTask = async (id: number, p0: { priority: "low" | "medium" | "high" }, completed: boolean, task: Task): Promise<Task> => {
-  const response = await fetch(`${apiBaseUrl}/workspaces/tasks/${task.id}`, {
+  const response = await fetch(`${apiBaseUrl}/workspaces/tasks/${id}`, {
     method: 'PATCH',
     headers: getDefaultHeaders(),
     body: JSON.stringify({ ...task, id, p0, completed }), // Exclude id from the body

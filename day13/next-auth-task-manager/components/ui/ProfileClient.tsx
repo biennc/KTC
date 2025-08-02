@@ -16,7 +16,7 @@ const ProfileClient =  () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await fetch(`${process.env.NEXTAUTH_URL}/users/profile`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
                     headers: {
                         'Content-Type': 'application/json',
                     },

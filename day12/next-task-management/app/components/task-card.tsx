@@ -1,15 +1,16 @@
 "use client"
 
 import type { Task } from "@/app/lib/constants"
-import { Calendar, Clock, Trash2 } from "lucide-react"
+import { Calendar, Clock, Pencil, Trash2 } from "lucide-react"
 
 interface TaskCardProps {
   task: Task
   onToggle?: (id: number, completed: boolean) => void
   onDelete?: (id: number) => void
+  onEdit?: (id: number) => void
 }
 
-export function TaskCard({ task, onToggle, onDelete }: TaskCardProps) {
+export function TaskCard({ task, onToggle, onDelete, onEdit }: TaskCardProps) {
   const priorityColors = {
     low: "bg-green-100 text-green-800",
     medium: "bg-yellow-100 text-yellow-800",
@@ -40,6 +41,14 @@ export function TaskCard({ task, onToggle, onDelete }: TaskCardProps) {
               className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
             >
               <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+          {onEdit && (
+            <button
+              onClick={() => onEdit(task.id)}
+              className="p-1 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
+            >
+              <Pencil className="h-4 w-4" />
             </button>
           )}
         </div>

@@ -2,7 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-const authUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const authUrl = process.env.NEXT_API_URL;
 
 export async function GET() {
   const session = await getServerSession(authOptions);

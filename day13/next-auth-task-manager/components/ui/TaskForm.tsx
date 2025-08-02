@@ -63,10 +63,10 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSubmit, onCancel, mode }) =
 
         try {
             if (mode === 'add') {
-                await axiosClient.post(`${process.env.NEXTAUTH_URL}/workspaces/tasks`, formData);
+                await axiosClient.post('/workspaces/tasks', formData);
                 alert('Task created successfully!');
             } else if (mode === 'edit') {
-                await axiosClient.put(`${process.env.NEXTAUTH_URL}/workspaces/tasks/${formData.id}`, formData);
+                await axiosClient.put(`/workspaces/tasks/${formData.id}`, formData);
                 alert('Task updated successfully!');
             }
             

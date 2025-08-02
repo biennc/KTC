@@ -9,8 +9,9 @@ const LogoutButton = () => {
     setIsLoading(true);
     try {
       await signOut({
-        callbackUrl: '/login',
+        callbackUrl: `/login`,
         redirect: true
+
       });
     } catch (error) {
       console.error('Logout error:', error);

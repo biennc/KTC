@@ -9,7 +9,7 @@ interface UserRole {
 
 interface UserType {
   id: string;
-  name: string;
+  username: string;
   email: string;
   avatar: string;
   accessToken: string;
@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Sign in",
       credentials: {
-        email: {
+        username: {
           label: "Email",
           type: "email",
           placeholder: "example@example.com",
@@ -37,19 +37,19 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        if (!credentials?.email || !credentials.password) {
+        if (!credentials?.username || !credentials.password) {
           return null;
         }
 
         const payload = {
-          email: credentials.email,
+          email: credentials.username,
           password: credentials.password,
         };
 
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/auth/login`, {
+        const res = await fetch(`${process.env.NEXT_API_URL}/auth/login`, {
           method: "POST",
           body: JSON.stringify({
-            username: credentials.email,
+            username: credentials.username,
             password: credentials.password,
           }),
           headers: {
@@ -65,12 +65,12 @@ export const authOptions: NextAuthOptions = {
         if (tokens) {
           return {
             id: tokens.loggedInUser.id,
-            name: tokens.loggedInUser.name,
+            username: tokens.loggedInUser.name,
             email: tokens.loggedInUser.email,
             avatar: tokens.loggedInUser.avatar,
             accessToken: tokens.access_token,
             refreshToken: tokens.refresh_token,
-            roles: tokens.loggedInUser.roles, // Thêm roles từ API response
+            roles: tokens.loggedInUser.roles,
           } as UserType;
         }
 

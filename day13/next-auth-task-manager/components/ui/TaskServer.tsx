@@ -35,7 +35,7 @@ const TaskServer = async () => {
      const userRoles = getUserRoles(session);
      const hasAdminRole = isAdministrator(userRoles);
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/workspaces/tasks`, {
+    const response = await fetch(`${process.env.NEXT_API_URL}/workspaces/tasks`, {
         headers: {
         'Authorization': `Bearer ${session.user.accessToken}`,
         },
@@ -117,7 +117,7 @@ const TaskServer = async () => {
                 <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center space-x-4">
                         <span className="text-gray-700">
-                            <strong>User:</strong> {session?.user?.email || 'Unknown'}
+                            <strong>User:</strong> {session?.user?.username || 'Unknown'}
                         </span>
                         <span className="text-gray-700">
                             <strong>Roles:</strong> {userRoles.map(role => role.name).join(', ') || 'No roles'}

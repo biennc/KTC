@@ -34,6 +34,8 @@ const DashboardPage = () => {
   });
 
   const userRoles = getUserRoles(session || {});
+  console.log("User Roles:", userRoles);
+  
   const hasAdminRole = isAdministrator(userRoles);
 
   useEffect(() => {

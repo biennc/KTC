@@ -24,7 +24,7 @@ import { getUserRoles, isAdministrator } from "@/app/utils/Permission";
 
 const DashboardLayout = ({children}:{children: React.ReactNode}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Start collapsed by default
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   // Auto-collapse on mobile
   const handleNavClick = () => {
@@ -41,12 +41,6 @@ const DashboardLayout = ({children}:{children: React.ReactNode}) => {
       name: 'Dashboard',
       href: '/dashboard',
       icon: FaHome,
-      adminOnly: false
-    },
-    {
-      name: 'Task Management',
-      href: '/dashboard/tasks-management',
-      icon: FaTasks,
       adminOnly: false
     },
     {
@@ -127,7 +121,7 @@ const DashboardLayout = ({children}:{children: React.ReactNode}) => {
           {/* Mobile close button */}
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-white hover:text-blue-200"
+            className="lg:hidden text-red-500 hover:text-blue-200"
           >
             <FaTimes className="w-5 h-5" />
           </button>
